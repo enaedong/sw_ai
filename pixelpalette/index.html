@@ -73,6 +73,17 @@
       color: #fffff0cc;
       padding-left: 20px;
     }
+    .notice {
+      text-align: center;
+      color: #ffd700;
+      font-size: 16px;
+      margin: 40px auto;
+      padding: 15px;
+      max-width: 800px;
+      border: 1px solid #ffd700;
+      border-radius: 5px;
+      background-color: rgba(255, 215, 0, 0.1);
+    }
   </style>
 </head>
 
@@ -92,6 +103,10 @@
     PIXELPALETTE.COM은 사용자의 요구에 따라 자동으로 픽셀아트에 사용할 팔레트를 생성해주는 웹사이트 입니다.<br>
     팔레트에 들어갈 색 개수, 팔레트의 분위기, 대표색 등의 간단한 정보만으로 원하는 팔레트를 만들어보세요.
   </p>
+
+  <div class="notice">
+    본 페이지는 서비스를 런칭 하기 전, 피드백 수집 목적으로 제작된 데모 페이지입니다.
+  </div>
 
   <div class="faq-section">
     <h2>FAQ</h2>
@@ -131,7 +146,7 @@
   <center>
     <p>이메일을 남겨주시면 서비스가 런칭되었을 때 알림을 드리겠습니다.</p>
     <input id="submit-email" type="email" placeholder="알림을 받으실 이메일" /><br><br>
-    <p>서비스에 대한 조언을 남겨주세요</p>
+    <p>서비스에 대한 조언을 남겨주세요.(선택)</p>
     <textarea id="submit-advice" cols="40" rows="5" placeholder="서비스에 대한 조언을 남겨주세요"></textarea><br>
     <button style="width:350px;" id="submit">지금 제출!</button>
   </center>
