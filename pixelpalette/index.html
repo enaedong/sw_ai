@@ -12,6 +12,7 @@
   <style>
     body {
       background-color: #1e1e2d;
+      font-family: 'HBIOS-SYS', sans-serif;
     }
     input, textarea, button {
       padding: 10px;
@@ -19,6 +20,15 @@
       border-radius: 5px;
       font-size: 16px;
       color: #333;
+      font-family: inherit !important;
+    }
+    input[type="color"] {
+      width: 80px !important;
+      height: 48px !important;
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
     }
     .logo-container {
       text-align: center;
@@ -88,6 +98,62 @@
       left: 50%;
       transform: translateX(-50%);
     }
+    .mood-btn.selected {
+      background: #ffd700 !important;
+      color: #23233a !important;
+      border: 2px solid #ffd700 !important;
+      font-weight: bold;
+    }
+    .main-flex {
+      display: flex;
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto 24px;
+      align-items: flex-start;
+    }
+    .main-left {
+      flex: 1 1 260px;
+      min-width: 220px;
+    }
+    .main-right {
+      flex: 1 1 260px;
+      min-width: 220px;
+      background: #23233a;
+      border-radius: 10px;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 16px;
+      padding: 10px 0;
+    }
+    @media (max-width: 900px) {
+      .main-flex {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .main-left, .main-right {
+        min-width: 0;
+      }
+    }
+    .mood-btn {
+      font-size: 13px !important;
+      padding: 4px 12px !important;
+      border-radius: 5px !important;
+      border: 1.5px solid #444 !important;
+      margin-right: 2px;
+      margin-bottom: 2px;
+      background: #23233a;
+      color: #fffff0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+      min-width: 48px;
+    }
+    input[type="file"] {
+      font-family: inherit !important;
+    }
   </style>
 </head>
 
@@ -103,57 +169,62 @@
     <img src="images/logo.png" alt="Pixel Palette Logo">
   </div>
 
-  <p class="description">
-    PIXELPALETTE.COM은 사용자의 요구에 따라 자동으로 픽셀아트에 사용할 팔레트를 생성해주는 웹사이트 입니다.<br>
-    팔레트에 들어갈 색 개수, 팔레트의 분위기, 대표색 등의 간단한 정보만으로 원하는 팔레트를 만들어보세요.
-  </p>
 
-  <div class="notice">
-    본 페이지는 서비스를 런칭 하기 전, 아이디어에 대한 피드백 수집을 목적으로 제작된 데모 페이지입니다.
+  <div class="main-flex">
+    <div class="main-left">
+      <div id="palette-options" style="background: #23233a; border-radius: 10px; padding: 18px 16px 10px 16px; box-shadow: 0 2px 10px #0002; color: #fffff0; font-size: 15px; margin-bottom: 0;">
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 6px; color: #ffd700; text-align: center; letter-spacing: 1px;">팔레트 옵션</h2>
+        <div style="margin-bottom: 10px;">
+          <label for="base-color" style="display:inline-block; width: 120px;">기본색 선택:</label>
+          <input type="color" id="base-color" value="#ffb300" style="vertical-align: middle;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label for="color-count" style="display:inline-block; width: 120px;">색 개수:</label>
+          <input type="range" id="color-count" min="2" max="64" value="8" style="vertical-align: middle; width: 180px;">
+          <span id="color-count-value" style="margin-left: 10px; font-weight: bold;">8</span>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label for="color-range" style="display:inline-block; width: 120px;">색 다양성:</label>
+          <input type="range" id="color-range" min="1" max="100" value="50" style="vertical-align: middle; width: 180px;">
+          <span id="color-range-value" style="margin-left: 10px; font-weight: bold;">50</span>
+        </div>
+        <div style="margin-bottom: 8px; display: flex; align-items: center;">
+          <label style="display:inline-block; width: 60px; min-width:60px;">분위기:</label>
+          <div id="mood-options" style="display:flex; gap:2px; margin-left:8px;">
+            <button type="button" class="mood-btn" data-mood="따뜻한">따뜻한</button>
+            <button type="button" class="mood-btn" data-mood="차가운">차가운</button>
+            <button type="button" class="mood-btn" data-mood="복고풍">복고풍</button>
+            <button type="button" class="mood-btn" data-mood="파스텔">파스텔</button>
+            <button type="button" class="mood-btn" data-mood="선명한">선명한</button>
+          </div>
+          <input type="hidden" id="selected-mood" value="">
+        </div>
+      </div>
+
+      <div id="palette-action-area" style="text-align: center;">
+        <button id="generate-palette" style="font-size: 15px; padding: 8px 20px; border-radius: 7px; background: #ffd700; color: #23233a; border: none; font-weight: bold; margin-bottom: 16px; margin-top: 20px; cursor: pointer;">팔레트 생성</button>
+        <div id="palette-preview" style="margin: 14px 0; min-height: 36px;"></div>
+        <button id="download-palette" style="font-size: 13px; padding: 7px 16px; border-radius: 7px; background: #333; color: #fff; border: none; font-weight: bold; display: none; cursor: pointer;">PNG로 다운로드</button>
+      </div>
+    </div>
+    <div class="main-right">
+      <div style="width:100%; text-align:center;">
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 6px; color: #ffd700; text-align: center; letter-spacing: 1px;">이미지 미리보기</h2>
+        <div class="custom-file-wrap" style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:10px;">
+          <input type="file" id="img-upload" accept="image/*" style="display:none;">
+          <button type="button" id="fake-file-btn" style="font-family:inherit; font-size:15px; padding:6px 18px; border-radius:6px; background:#ffd700; color:#23233a; border:none; font-weight:bold; cursor:pointer;">파일 선택</button>
+          <span id="file-name" style="color:#fff; font-family:inherit; font-size:15px;">선택된 파일 없음</span>
+        </div>
+        <div style="margin-bottom:8px;">
+          <canvas id="img-canvas" width="220" height="220" style="max-width:100%; background:#111; border-radius:10px; display:none;"></canvas>
+        </div>
+        <button id="to-grayscale" style="padding:6px 16px; font-size:13px; border-radius:6px; background:#ffd700; color:#23233a; border:none; font-weight:bold; display:none;">팔레트 적용</button>
+        <div style="margin-top:10px;">
+          <canvas id="result-canvas" width="220" height="220" style="max-width:100%; background:#222; border-radius:10px; display:none;"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="faq-section">
-    <h2>FAQ</h2>
-    
-    <div class="faq-item">
-      <div class="faq-question">1. 이 사이트는 어떤 기준으로 색 팔레트를 만들어 주나요?</div>
-      <div class="faq-answer">사용자가 입력한 색 개수, 분위기(예: 따뜻한, 차가운, 복고풍), 대표색 등을 바탕으로 알고리즘이 자동 생성합니다.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">2. 생성된 팔레트는 상업적으로 사용해도 되나요?</div>
-      <div class="faq-answer">네, 생성된 팔레트는 자유롭게 사용하실 수 있으며, 개인 및 상업 프로젝트에 제한 없이 활용 가능합니다.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">3. 팔레트를 저장하거나 다시 불러올 수 있나요?</div>
-      <div class="faq-answer">생성된 팔레트를 PNG 파일로 다운로드할 수 있습니다.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">4. 팔레트에 포함될 색상 수는 최대 몇 개까지 설정할 수 있나요?</div>
-      <div class="faq-answer">최소 2개에서 최대 64개까지 설정 가능합니다.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">5. 이 사이트는 무료인가요?</div>
-      <div class="faq-answer">네, 기본적인 팔레트 생성 기능은 모두 무료입니다.</div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">6. 생성된 팔레트를 미리보기로 확인할 수 있나요?</div>
-      <div class="faq-answer">네, 팔레트가 적용된 예제 픽셀아트 샘플을 함께 제공하여, 실제 사용 시 느낌을 미리 확인할 수 있습니다.</div>
-    </div>
-  </div>
-
-  <!-- 폼 영역 -->
-  <center>
-    <p>이메일을 남겨주시면 서비스가 런칭될 때 메일을 드리겠습니다.</p>
-    <input id="submit-email" type="email" placeholder="알림을 받으실 이메일." /><br><br>
-    <p>아이디어에 대한 피드백을 남겨주세요.</p>
-    <textarea id="submit-advice" cols="40" rows="5" placeholder="아이디어에 대한 피드백을 남겨주세요."></textarea><br>
-    <button style="width:350px;" id="submit">제출!</button>
-  </center>
 
   <!-- 팝업 -->
   <div id="popup" style="display:none;">
@@ -261,13 +332,297 @@
           });
       });
     });
+
+    // 팔레트 옵션 UI 동작
+    $(function() {
+      // 색 개수 슬라이더 값 표시
+      $('#color-count').on('input', function() {
+        $('#color-count-value').text($(this).val());
+      });
+      // 색 범위 슬라이더 값 표시
+      $('#color-range').on('input', function() {
+        $('#color-range-value').text($(this).val());
+      });
+      // 분위기 버튼 토글
+      $('.mood-btn').on('click', function() {
+        if ($(this).hasClass('selected')) {
+          $(this).removeClass('selected');
+          $('#selected-mood').val('');
+        } else {
+          $('.mood-btn').removeClass('selected');
+          $(this).addClass('selected');
+          $('#selected-mood').val($(this).data('mood'));
+        }
+      });
+
+      // 팔레트 생성 버튼 동작
+      function hexToHSL(hex) {
+        // hex -> h,s,l 변환
+        let r = 0, g = 0, b = 0;
+        if (hex.length === 4) {
+          r = parseInt(hex[1] + hex[1], 16);
+          g = parseInt(hex[2] + hex[2], 16);
+          b = parseInt(hex[3] + hex[3], 16);
+        } else if (hex.length === 7) {
+          r = parseInt(hex[1] + hex[2], 16);
+          g = parseInt(hex[3] + hex[4], 16);
+          b = parseInt(hex[5] + hex[6], 16);
+        }
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if (max === min) {
+          h = s = 0;
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+          }
+          h /= 6;
+        }
+        return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+      }
+
+      function hslToHex(h, s, l) {
+        s /= 100; l /= 100;
+        let c = (1 - Math.abs(2 * l - 1)) * s;
+        let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        let m = l - c / 2;
+        let r = 0, g = 0, b = 0;
+        if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+        else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+        else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+        else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+        else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+        else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+        r = Math.round((r + m) * 255);
+        g = Math.round((g + m) * 255);
+        b = Math.round((b + m) * 255);
+        return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join("");
+      }
+
+      function generatePalette(baseHex, count, range, mood) {
+        // baseHex: #rrggbb, count: int, range: 1~100, mood: string
+        let [h, s, l] = hexToHSL(baseHex);
+        let colors = [baseHex.toLowerCase()]; // 기본색을 첫 번째로 넣음
+        let spread = Math.max(5, Math.round(range * 1.5));
+        // 분위기별 HSL 조정
+        let moodH = h, moodS = s, moodL = l;
+        let moodHueRange = 0;
+        if (mood === '따뜻한') {
+          moodH = 20 + Math.random() * 40;
+          moodS = Math.max(s, 70);
+          moodL = Math.max(l, 55);
+          moodHueRange = 50;
+          spread = Math.round(spread * 1.2);
+        } else if (mood === '차가운') {
+          moodH = (h * 0.7 + 210 * 0.3) % 360;
+          moodS = Math.max(s, 60);
+          moodL = Math.max(l, 45);
+          moodHueRange = 50;
+          spread = Math.round(spread * 1.2);
+        } else if (mood === '복고풍') {
+          moodS = Math.min(s, 45);
+          moodL = 55 + Math.random() * 10;
+          moodHueRange = 80;
+          moodH = (h + Math.random() * 360) % 360;
+        } else if (mood === '파스텔') {
+          moodS = 30 + Math.random() * 20;
+          moodL = 80 + Math.random() * 10;
+          moodHueRange = 40;
+        } else if (mood === '선명한') {
+          moodS = 85 + Math.random() * 10;
+          moodL = 60 + Math.random() * 15;
+          moodHueRange = 40;
+        } else {
+          moodHueRange = spread;
+        }
+        while (colors.length < count) {
+          let dh = Math.round((Math.random() - 0.5) * moodHueRange);
+          let ds = Math.round((Math.random() - 0.5) * spread * 0.6);
+          let dl = Math.round((Math.random() - 0.5) * spread * 0.6);
+          let nh = (moodH + dh + 360) % 360;
+          let ns = Math.min(100, Math.max(0, moodS + ds));
+          let nl = Math.min(100, Math.max(0, moodL + dl));
+          let hex = hslToHex(nh, ns, nl).toLowerCase();
+          if (!colors.includes(hex)) {
+            colors.push(hex);
+          }
+        }
+        return colors;
+      }
+
+      function renderPalettePreview(colors) {
+        // rgb값 합(밝기) 순으로 정렬
+        function hexToSum(hex) {
+          const r = parseInt(hex.substr(1,2),16);
+          const g = parseInt(hex.substr(3,2),16);
+          const b = parseInt(hex.substr(5,2),16);
+          return r+g+b;
+        }
+        let sorted = colors.slice().sort((a,b)=>hexToSum(a)-hexToSum(b));
+        let html = '<div style="display:flex; justify-content:center; align-items:center; gap:1px;">';
+        sorted.forEach(color => {
+          html += `<div style=\"width:28px; height:28px; border-radius:6px; background:${color}; border:1.5px solid #23233a;\"></div>`;
+        });
+        html += '</div>';
+        $('#palette-preview').html(html);
+      }
+
+      function paletteToPNG(colors) {
+        const size = 48, gap = 2;
+        const w = colors.length * (size + gap) - gap;
+        const h = size;
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        colors.forEach((color, i) => {
+          ctx.fillStyle = color;
+          ctx.fillRect(i * (size + gap), 0, size, size);
+        });
+        return canvas.toDataURL('image/png');
+      }
+
+      let lastPalette = null;
+
+      $('#generate-palette').on('click', function() {
+        const base = $('#base-color').val();
+        const count = parseInt($('#color-count').val(), 10);
+        const range = parseInt($('#color-range').val(), 10);
+        const mood = $('#selected-mood').val();
+        const colors = generatePalette(base, count, range, mood);
+        lastPalette = colors;
+        renderPalettePreview(colors);
+        $('#download-palette').show();
+      });
+
+      $('#download-palette').on('click', function() {
+        if (!lastPalette) return;
+        const url = paletteToPNG(lastPalette);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'palette.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+
+      // 커스텀 파일 선택 버튼 동작
+      $('#fake-file-btn').on('click', function() {
+        $('#img-upload').click();
+      });
+      $('#img-upload').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+          $('#file-name').text(file.name).css('color', '#ffd700');
+        } else {
+          $('#file-name').text('선택된 파일 없음').css('color', '#fff');
+        }
+      });
+
+      // 이미지 업로드 및 미리보기
+      let img = new Image();
+      let imgLoaded = false;
+      $('#img-upload').on('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          img.onload = function() {
+            const canvas = document.getElementById('img-canvas');
+            const ctx = canvas.getContext('2d');
+            // 캔버스 크기 맞추기
+            let w = img.width, h = img.height;
+            if (w > h) { canvas.width = 220; canvas.height = Math.round(220 * h / w); }
+            else { canvas.height = 220; canvas.width = Math.round(220 * w / h); }
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            $('#img-canvas').show();
+            $('#to-grayscale').show();
+            $('#result-canvas').hide();
+            imgLoaded = true;
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // 그레이스케일 변환 및 색상 줄이기
+      $('#to-grayscale').on('click', function() {
+        if (!imgLoaded) return;
+        const canvas = document.getElementById('img-canvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+        // 1. 그레이스케일 변환
+        for (let i = 0; i < data.length; i += 4) {
+          const avg = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+          data[i] = data[i+1] = data[i+2] = avg;
+        }
+        // 2. 색상 줄이기 (팔레트 색 개수만큼)
+        const colorCount = parseInt($('#color-count').val(), 10);
+        const step = Math.floor(256 / colorCount);
+        for (let i = 0; i < data.length; i += 4) {
+          const gray = data[i];
+          const bucket = Math.min(colorCount-1, Math.floor(gray / step));
+          const newGray = bucket * step + Math.floor(step/2);
+          data[i] = data[i+1] = data[i+2] = newGray;
+        }
+        // 3. 실제 사용된 회색값 추출
+        let usedGrays = new Set();
+        for (let i = 0; i < data.length; i += 4) {
+          usedGrays.add(data[i]);
+        }
+        let grayArr = Array.from(usedGrays);
+        // 4. 회색값을 R+G+B 합(=gray*3) 기준으로 정렬 (사실상 gray값 오름차순)
+        grayArr.sort((a, b) => a - b);
+        // 5. 팔레트 색상도 R+G+B 합 기준으로 정렬
+        let palette = lastPalette;
+        if (!palette || palette.length !== grayArr.length) {
+          // 팔레트가 없거나, 팔레트 색 개수와 회색값 개수가 다르면 새로 생성
+          const base = $('#base-color').val();
+          const range = parseInt($('#color-range').val(), 10);
+          const mood = $('#selected-mood').val();
+          palette = generatePalette(base, grayArr.length, range, mood);
+        }
+        // 팔레트 색상 RGB합 기준 정렬
+        function hexToSum(hex) {
+          const r = parseInt(hex.substr(1,2),16);
+          const g = parseInt(hex.substr(3,2),16);
+          const b = parseInt(hex.substr(5,2),16);
+          return r+g+b;
+        }
+        let paletteSorted = palette.slice().sort((a,b)=>hexToSum(a)-hexToSum(b));
+        // 6. 매핑 테이블 생성 (gray값 → 팔레트 색상)
+        let mapping = {};
+        for (let i=0; i<grayArr.length; ++i) {
+          mapping[grayArr[i]] = paletteSorted[i];
+        }
+        // 7. 이미지 리마핑
+        for (let i = 0; i < data.length; i += 4) {
+          const gray = data[i];
+          const hex = mapping[gray];
+          data[i]   = parseInt(hex.substr(1,2),16);
+          data[i+1] = parseInt(hex.substr(3,2),16);
+          data[i+2] = parseInt(hex.substr(5,2),16);
+        }
+        // 결과 캔버스에 출력
+        const resultCanvas = document.getElementById('result-canvas');
+        resultCanvas.width = w; resultCanvas.height = h;
+        const resultCtx = resultCanvas.getContext('2d');
+        resultCtx.putImageData(imgData, 0, 0);
+        $('#result-canvas').show();
+      });
+    });
   </script>
 
   <!-- 반드시 sendVisitorInfo 정의 이후에 jsonip 로드 -->
   <script src="https://jsonip.com?format=jsonp&callback=getIP"></script>
 
-  <footer style="font-size: 12px; color: #75757582; text-align: center; padding: 10px;">
-    이 사이트의 모든 이미지 및 콘텐츠는 제작자에게 저작권이 있으며, 무단 복제 및 사용을 금지합니다. ⓒ 2025 PIXELBRACHIO
-  </footer>
 </body>
 </html>
